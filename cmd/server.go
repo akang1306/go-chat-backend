@@ -9,15 +9,15 @@ import (
 )
 
 const (
-	ServerPort = "8080"
-	CheckEndpoint = "/check"
-	UsersEndpoint = "/users"
-	LoginEndpoint = "/login"
+	ServerPort       = "8080"
+	CheckEndpoint    = "/check"
+	UsersEndpoint    = "/users"
+	LoginEndpoint    = "/login"
 	MessagesEndpoint = "/messages"
 )
 
 func main() {
-	h := controller.Handler{}
+	h := controller.NewController()
 
 	// Configure endpoints
 	// Health
@@ -65,5 +65,5 @@ func main() {
 
 	// Start server
 	log.Println("Server started at port " + ServerPort)
-	log.Fatal(http.ListenAndServe(":" + ServerPort, nil))
+	log.Fatal(http.ListenAndServe(":"+ServerPort, nil))
 }
