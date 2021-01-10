@@ -3,7 +3,6 @@ package service
 import (
 	"errors"
 
-	"github.com/challenge/pkg/jwt"
 	"github.com/challenge/pkg/models"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -22,6 +21,6 @@ func (h Handler) Login(username, password string) (models.Login, error) {
 
 	return models.Login{
 		UserID: user.ID,
-		Token:  jwt.TokenForUser(user),
+		Token:  h.tokenManager.TokenForUser(user),
 	}, nil
 }

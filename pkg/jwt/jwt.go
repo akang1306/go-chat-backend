@@ -10,12 +10,15 @@ import (
 var defaultExpiration time.Duration = time.Hour
 var secretKey string = "secret"
 
+type Manager struct {
+}
+
 type Token struct {
 	UserID int
 	*jwt.StandardClaims
 }
 
-func TokenForUser(user *models.User) string {
+func (Manager) TokenForUser(user *models.User) string {
 	expiresAt := time.Now().Add(defaultExpiration).Unix()
 	tokenClaims := &Token{
 		UserID: user.ID,
@@ -31,7 +34,7 @@ func TokenForUser(user *models.User) string {
 	return tokenString
 }
 
-func VerifyToken(tokenString string) (int, error) {
+func (Manager) VerifyToken(tokenString string) (int, error) {
 	token := Token{}
 	_, err := jwt.ParseWithClaims(tokenString, token, func(token *jwt.Token) (interface{}, error) {
 		return []byte(secretKey), nil
@@ -40,4 +43,8 @@ func VerifyToken(tokenString string) (int, error) {
 		return 0, err
 	}
 	return token.UserID, nil
+}
+
+func New() Manager {
+	return Manager{}
 }
