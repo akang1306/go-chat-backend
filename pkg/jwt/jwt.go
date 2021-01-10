@@ -18,6 +18,7 @@ type Token struct {
 	*jwt.StandardClaims
 }
 
+// TokenForUser returns a token valid for the given user with default expiration.
 func (Manager) TokenForUser(user *models.User) string {
 	expiresAt := time.Now().Add(defaultExpiration).Unix()
 	tokenClaims := &Token{
@@ -34,6 +35,7 @@ func (Manager) TokenForUser(user *models.User) string {
 	return tokenString
 }
 
+// VerifyToken checks the tokenString and returns userID if valid, error if not.
 func (Manager) VerifyToken(tokenString string) (int, error) {
 	token := Token{}
 	_, err := jwt.ParseWithClaims(tokenString, token, func(token *jwt.Token) (interface{}, error) {
