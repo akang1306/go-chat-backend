@@ -74,8 +74,14 @@ func (db *MockDB) AddMessage(ctx context.Context, sender, recipient int, content
 	return &msg, nil
 }
 
-func (db *MockDB) GetMessages(ctx context.Context, sender, start, limit int) error {
-	return nil
+func (db *MockDB) GetMessages(ctx context.Context, sender, start, limit int) ([]*models.Message, error) {
+	msgList := make([]*models.Message, 0)
+	for _, msg := range db.Messages {
+		if msg.ID >= start && msg.SenderID == sender && len(msgList) < limit {
+			msgList = append(msgList, &msg)
+		}
+	}
+	return msgList, nil
 }
 
 func NewMockDB() *MockDB {

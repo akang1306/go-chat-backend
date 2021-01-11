@@ -11,6 +11,7 @@ type serviceHandler interface {
 	Login(ctx context.Context, username, password string) (*models.Login, error)
 	Health(ctx context.Context) models.Health
 	SendMessage(ctx context.Context, sender, recipient int, content models.MessageContent) (*models.Message, error)
+	GetMessages(ctx context.Context, recipient int, start, limit int) ([]*models.Message, error)
 }
 
 // Handler provides the interface to handle different requests

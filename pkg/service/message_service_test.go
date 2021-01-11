@@ -74,3 +74,31 @@ func TestCanNotSendMessageFromUnexistingSender(t *testing.T) {
 		t.Errorf("Error: expected err but got nil")
 	}
 }
+
+// TODO: Test all variations
+func TestGetMessages(t *testing.T) {
+	db := database.NewMockDB()
+	service := service.NewService(db, jwt.New())
+	ctx := context.TODO()
+
+	username1 := "user1"
+	username2 := "user2"
+	password := "a"
+	user1, _ := service.CreateUser(ctx, username1, password)
+	user2, _ := service.CreateUser(ctx, username2, password)
+	content := models.StringContent{}
+
+	service.SendMessage(ctx, user1.ID, user2.ID, content)
+	service.SendMessage(ctx, user1.ID, user2.ID, content)
+	service.SendMessage(ctx, user1.ID, user2.ID, content)
+
+	// limit works as expected
+	limit := 2
+	messages, err := service.GetMessages(ctx, user1.ID, 0, limit)
+	if err != nil {
+		t.Errorf("Error: %s", err)
+	}
+	if len(messages) != limit {
+		t.Errorf("Error: expected msg length %d but got %d", limit, len(messages))
+	}
+}

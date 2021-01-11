@@ -3,6 +3,7 @@ package controller
 import (
 	"encoding/json"
 	"net/http"
+	"strconv"
 
 	"github.com/challenge/pkg/helpers"
 	"github.com/challenge/pkg/models"
@@ -15,7 +16,7 @@ func (h Handler) SendMessage(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
-	if r.Context().Value("user") != request.Sender {
+	if !IsValidForUser(r, request.Sender) {
 		http.Error(w, "Token user does not match sender id.", http.StatusUnauthorized)
 		return
 	}
@@ -31,6 +32,41 @@ func (h Handler) SendMessage(w http.ResponseWriter, r *http.Request) {
 
 // GetMessages get the messages from the logged user to a recipient
 func (h Handler) GetMessages(w http.ResponseWriter, r *http.Request) {
-	// TODO: Retrieve list of Messages
-	helpers.RespondJSON(w, []*models.Message{{}})
+	recipientValue := r.URL.Query().Get("recipient")
+	startValue := r.URL.Query().Get("start")
+	limitValue := r.URL.Query().Get("limit")
+
+	recipientID, errRecipient := strconv.Atoi(recipientValue)
+	start, errStart := strconv.Atoi(startValue)
+	if errStart != nil || errRecipient != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+
+	limit, errLimit := strconv.Atoi(limitValue)
+	if errLimit != nil {
+		if limitValue != "" {
+			http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+			return
+		} else {
+			limit = 0
+		}
+	}
+
+	if !IsValidForUser(r, recipientID) {
+		http.Error(w, "Token user does not match recipient id.", http.StatusUnauthorized)
+		return
+	}
+
+	messages, err := h.Service.GetMessages(r.Context(),
+		recipientID, start, limit)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	helpers.RespondJSON(w, messages)
+}
+
+func IsValidForUser(r *http.Request, userID int) bool {
+	return r.Context().Value("user") == userID
 }
