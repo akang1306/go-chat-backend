@@ -7,8 +7,8 @@ import (
 )
 
 type serviceHandler interface {
-	CreateUser(ctx context.Context, username, password string) (models.User, error)
-	Login(ctx context.Context, username, password string) (models.Login, error)
+	CreateUser(ctx context.Context, username, password string) (*models.User, error)
+	Login(ctx context.Context, username, password string) (*models.Login, error)
 	Health(ctx context.Context) models.Health
 }
 

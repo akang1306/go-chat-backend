@@ -7,7 +7,7 @@ import (
 )
 
 type database interface {
-	AddUser(ctx context.Context, user models.User) (int, error)
+	AddUser(ctx context.Context, username string, password []byte) (*models.User, error)
 	GetUserByUsername(ctx context.Context, username string) (*models.User, error)
 }
 

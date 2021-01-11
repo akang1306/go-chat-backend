@@ -15,18 +15,22 @@ type MockDB struct {
 	Messages []models.Message
 }
 
-func (db *MockDB) AddUser(ctx context.Context, user models.User) (int, error) {
+func (db *MockDB) AddUser(ctx context.Context, username string, password []byte) (*models.User, error) {
 	for _, u := range db.Users {
-		if u.Username == user.Username {
-			return 0, errors.New("Username already exists")
+		if u.Username == username {
+			return nil, errors.New("Username already exists")
 		}
 	}
 	db.m.Lock()
 	defer db.m.Unlock()
 	newID := len(db.Users)
-	user.ID = newID
+	user := models.User{
+		ID:       newID,
+		Username: username,
+		Password: password,
+	}
 	db.Users = append(db.Users, user)
-	return newID, nil
+	return &user, nil
 }
 
 func (db *MockDB) GetUserByUsername(ctx context.Context, username string) (*models.User, error) {
