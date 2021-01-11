@@ -21,7 +21,7 @@ func (h Handler) Login(w http.ResponseWriter, r *http.Request) {
 	}
 	login, err := h.Service.Login(r.Context(), loginRequest.Username, loginRequest.Password)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
 	}
 	helpers.RespondJSON(w, login)
