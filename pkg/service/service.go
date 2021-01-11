@@ -1,13 +1,14 @@
 package service
 
 import (
-	"github.com/challenge/pkg/jwt"
+	"context"
+
 	"github.com/challenge/pkg/models"
 )
 
 type database interface {
-	AddUser(user models.User) (int, error)
-	GetUserByUsername(username string) (*models.User, error)
+	AddUser(ctx context.Context, user models.User) (int, error)
+	GetUserByUsername(ctx context.Context, username string) (*models.User, error)
 }
 
 type tokenManager interface {
@@ -20,6 +21,6 @@ type Handler struct {
 	tokenManager tokenManager
 }
 
-func NewService(db database) Handler {
-	return Handler{db: db, tokenManager: jwt.New()}
+func NewService(db database, tokenManager tokenManager) Handler {
+	return Handler{db: db, tokenManager: tokenManager}
 }

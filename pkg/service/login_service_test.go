@@ -1,23 +1,26 @@
 package service_test
 
 import (
+	"context"
 	"testing"
 
 	"github.com/challenge/pkg/database"
+	"github.com/challenge/pkg/jwt"
 	"github.com/challenge/pkg/service"
 )
 
 func TestLoginWorksAsExpected(t *testing.T) {
 	db := database.NewMockDB()
-	service := service.NewService(db)
+	service := service.NewService(db, jwt.New())
+	ctx := context.TODO()
 
 	expectedID := 0
 	username := "user1"
 	password := "generic_password"
 
-	_, _ = service.CreateUser(username, password)
+	_, _ = service.CreateUser(ctx, username, password)
 
-	login, err := service.Login(username, password)
+	login, err := service.Login(ctx, username, password)
 	if err != nil {
 		t.Errorf("Error: %s", err)
 	}
@@ -31,14 +34,15 @@ func TestLoginWorksAsExpected(t *testing.T) {
 
 func TestCanNotLoginInvalidUsername(t *testing.T) {
 	db := database.NewMockDB()
-	service := service.NewService(db)
+	service := service.NewService(db, jwt.New())
+	ctx := context.TODO()
 
 	username := "user1"
 	password := "generic_password"
 
-	_, _ = service.CreateUser(username, password)
+	_, _ = service.CreateUser(ctx, username, password)
 
-	_, err := service.Login("user2", password)
+	_, err := service.Login(ctx, "user2", password)
 	if err == nil {
 		t.Errorf("Error: expected err but got nil")
 	}
@@ -46,14 +50,15 @@ func TestCanNotLoginInvalidUsername(t *testing.T) {
 
 func TestCanNotLoginInvalidPassword(t *testing.T) {
 	db := database.NewMockDB()
-	service := service.NewService(db)
+	service := service.NewService(db, jwt.New())
+	ctx := context.TODO()
 
 	username := "user1"
 	password := "generic_password"
 
-	_, _ = service.CreateUser(username, password)
+	_, _ = service.CreateUser(ctx, username, password)
 
-	_, err := service.Login(username, "invalidpwd")
+	_, err := service.Login(ctx, username, "invalidpwd")
 	if err == nil {
 		t.Errorf("Error: expected err but got nil")
 	}

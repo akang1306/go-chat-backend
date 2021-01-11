@@ -1,7 +1,11 @@
 package service
 
-import "github.com/challenge/pkg/models"
+import (
+	"context"
 
-func (h Handler) Health() models.Health {
+	"github.com/challenge/pkg/models"
+)
+
+func (h Handler) Health(_ context.Context) models.Health {
 	return models.Health{Health: "ok"}
 }

@@ -1,6 +1,7 @@
 package database
 
 import (
+	"context"
 	"errors"
 
 	"github.com/challenge/pkg/models"
@@ -12,7 +13,7 @@ type MockDB struct {
 	Messages []models.Message
 }
 
-func (db *MockDB) AddUser(user models.User) (int, error) {
+func (db *MockDB) AddUser(ctx context.Context, user models.User) (int, error) {
 	for _, u := range db.Users {
 		if u.Username == user.Username {
 			return 0, errors.New("Username already exists")
@@ -24,7 +25,7 @@ func (db *MockDB) AddUser(user models.User) (int, error) {
 	return newID, nil
 }
 
-func (db *MockDB) GetUserByUsername(username string) (*models.User, error) {
+func (db *MockDB) GetUserByUsername(ctx context.Context, username string) (*models.User, error) {
 	for _, user := range db.Users {
 		if user.Username == username {
 			return &user, nil
@@ -33,13 +34,13 @@ func (db *MockDB) GetUserByUsername(username string) (*models.User, error) {
 	return nil, errors.New("user id not present")
 }
 
-func (db *MockDB) AddMessage(msg models.Message) error {
+func (db *MockDB) AddMessage(ctx context.Context, msg models.Message) error {
 	msg.ID = len(db.Messages)
 	db.Messages = append(db.Messages, msg)
 	return nil
 }
 
-func (db *MockDB) GetMessages(sender, start, limit int) error {
+func (db *MockDB) GetMessages(ctx context.Context, sender, start, limit int) error {
 	return nil
 }
 

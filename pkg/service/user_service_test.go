@@ -1,21 +1,24 @@
 package service_test
 
 import (
+	"context"
 	"testing"
 
 	"github.com/challenge/pkg/database"
+	"github.com/challenge/pkg/jwt"
 	"github.com/challenge/pkg/service"
 )
 
 func TestCanCreateUser(t *testing.T) {
 	db := database.NewMockDB()
-	service := service.NewService(db)
+	service := service.NewService(db, jwt.New())
+	ctx := context.TODO()
 
 	expectedID := 0
 	username := "user1"
 	password := "generic_password"
 
-	user, err := service.CreateUser(username, password)
+	user, err := service.CreateUser(ctx, username, password)
 
 	if err != nil {
 		t.Errorf("Error: %s", err)
@@ -30,13 +33,14 @@ func TestCanCreateUser(t *testing.T) {
 
 func TestCanNotCreateUserWithUsedUsername(t *testing.T) {
 	db := database.NewMockDB()
-	service := service.NewService(db)
+	service := service.NewService(db, jwt.New())
+	ctx := context.TODO()
 
 	username := "user1"
 	password := "generic_password"
 
-	_, _ = service.CreateUser(username, password)
-	_, err := service.CreateUser(username, password)
+	_, _ = service.CreateUser(ctx, username, password)
+	_, err := service.CreateUser(ctx, username, password)
 
 	if err == nil {
 		t.Errorf("Error: expected err but got nil")
@@ -45,12 +49,13 @@ func TestCanNotCreateUserWithUsedUsername(t *testing.T) {
 
 func TestCanNotCreateUserWithEmptyUsername(t *testing.T) {
 	db := database.NewMockDB()
-	service := service.NewService(db)
+	service := service.NewService(db, jwt.New())
+	ctx := context.TODO()
 
 	username := ""
 	password := "generic_password"
 
-	_, err := service.CreateUser(username, password)
+	_, err := service.CreateUser(ctx, username, password)
 
 	if err == nil {
 		t.Errorf("Error: expected err but got nil")
@@ -59,12 +64,13 @@ func TestCanNotCreateUserWithEmptyUsername(t *testing.T) {
 
 func TestCanNotCreateUserWithEmptyPassword(t *testing.T) {
 	db := database.NewMockDB()
-	service := service.NewService(db)
+	service := service.NewService(db, jwt.New())
+	ctx := context.TODO()
 
 	username := "user"
 	password := ""
 
-	_, err := service.CreateUser(username, password)
+	_, err := service.CreateUser(ctx, username, password)
 
 	if err == nil {
 		t.Errorf("Error: expected err but got nil")

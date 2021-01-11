@@ -19,7 +19,7 @@ func (h Handler) Login(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
-	login, err := h.Service.Login(loginRequest.Username, loginRequest.Password)
+	login, err := h.Service.Login(r.Context(), loginRequest.Username, loginRequest.Password)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return

@@ -19,7 +19,7 @@ func (h Handler) CreateUser(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
-	id, err := h.Service.CreateUser(userRequest.Username, userRequest.Password)
+	id, err := h.Service.CreateUser(r.Context(), userRequest.Username, userRequest.Password)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return

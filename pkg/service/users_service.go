@@ -1,6 +1,7 @@
 package service
 
 import (
+	"context"
 	"errors"
 
 	"github.com/challenge/pkg/models"
@@ -8,7 +9,7 @@ import (
 )
 
 // CreateUser attempts to create user with given username & password and returns user if successful, returns error if not.
-func (h Handler) CreateUser(username, password string) (models.User, error) {
+func (h Handler) CreateUser(ctx context.Context, username, password string) (models.User, error) {
 	user := models.User{}
 	if username == "" || password == "" {
 		return user, errors.New("empty username or password")
@@ -19,7 +20,7 @@ func (h Handler) CreateUser(username, password string) (models.User, error) {
 	}
 	user.Username = username
 	user.Password = hash
-	id, err := h.db.AddUser(user)
+	id, err := h.db.AddUser(ctx, user)
 	user.ID = id
 	return user, err
 }

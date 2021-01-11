@@ -8,5 +8,5 @@ import (
 
 // Check returns the health of the service and DB
 func (h Handler) Check(w http.ResponseWriter, r *http.Request) {
-	helpers.RespondJSON(w, h.Service.Health())
+	helpers.RespondJSON(w, h.Service.Health(r.Context()))
 }
