@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"sync"
 
+	"github.com/challenge/pkg/datetime"
 	"github.com/challenge/pkg/models"
 )
 
@@ -66,6 +67,7 @@ func (db *MockDB) AddMessage(ctx context.Context, sender, recipient int, content
 
 	msg := models.Message{
 		ID:          len(db.Messages),
+		Timestamp:   datetime.Now(),
 		SenderID:    sender,
 		RecipientID: recipient,
 		Content:     content,
@@ -76,9 +78,9 @@ func (db *MockDB) AddMessage(ctx context.Context, sender, recipient int, content
 
 func (db *MockDB) GetMessages(ctx context.Context, sender, start, limit int) ([]*models.Message, error) {
 	msgList := make([]*models.Message, 0)
-	for _, msg := range db.Messages {
+	for i, msg := range db.Messages {
 		if msg.ID >= start && msg.SenderID == sender && len(msgList) < limit {
-			msgList = append(msgList, &msg)
+			msgList = append(msgList, &db.Messages[i])
 		}
 	}
 	return msgList, nil
