@@ -36,7 +36,7 @@ func (h Handler) GetMessages(w http.ResponseWriter, r *http.Request) {
 	startValue := r.URL.Query().Get("start")
 	limitValue := r.URL.Query().Get("limit")
 
-	recipientID, errRecipient := strconv.Atoi(recipientValue)
+	recipientID, errRecipient := strconv.ParseInt(recipientValue, 0, 64)
 	start, errStart := strconv.Atoi(startValue)
 	if errStart != nil || errRecipient != nil {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
@@ -67,6 +67,6 @@ func (h Handler) GetMessages(w http.ResponseWriter, r *http.Request) {
 	helpers.RespondJSON(w, messages)
 }
 
-func IsValidForUser(r *http.Request, userID int) bool {
+func IsValidForUser(r *http.Request, userID models.UserID) bool {
 	return r.Context().Value("user") == userID
 }

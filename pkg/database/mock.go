@@ -17,22 +17,22 @@ type MockDB struct {
 	Messages []models.Message
 }
 
-func (db *MockDB) AddUser(ctx context.Context, username string, password []byte) (*models.User, error) {
+func (db *MockDB) AddUser(ctx context.Context, username string, password []byte) (models.UserID, error) {
 	for _, u := range db.Users {
 		if u.Username == username {
-			return nil, errors.New("Username already exists")
+			return 0, errors.New("Username already exists")
 		}
 	}
 	db.m.Lock()
 	defer db.m.Unlock()
 	newID := len(db.Users)
 	user := models.User{
-		ID:       newID,
+		ID:       models.UserID(newID),
 		Username: username,
 		Password: password,
 	}
 	db.Users = append(db.Users, user)
-	return &user, nil
+	return user.ID, nil
 }
 
 func (db *MockDB) GetUserByUsername(ctx context.Context, username string) (*models.User, error) {
@@ -44,7 +44,7 @@ func (db *MockDB) GetUserByUsername(ctx context.Context, username string) (*mode
 	return nil, errors.New(fmt.Sprintf("user: %s not present", username))
 }
 
-func (db *MockDB) GetUserByID(ctx context.Context, id int) (*models.User, error) {
+func (db *MockDB) GetUserByID(ctx context.Context, id models.UserID) (*models.User, error) {
 	for _, user := range db.Users {
 		if user.ID == id {
 			return &user, nil
@@ -53,7 +53,7 @@ func (db *MockDB) GetUserByID(ctx context.Context, id int) (*models.User, error)
 	return nil, errors.New(fmt.Sprintf("user id: %d not present", id))
 }
 
-func (db *MockDB) AddMessage(ctx context.Context, sender, recipient int, content models.MessageContent) (*models.Message, error) {
+func (db *MockDB) AddMessage(ctx context.Context, sender, recipient models.UserID, content models.MessageContent) (*models.MessageInfo, error) {
 	db.m.Lock()
 	defer db.m.Unlock()
 
@@ -66,20 +66,20 @@ func (db *MockDB) AddMessage(ctx context.Context, sender, recipient int, content
 	}
 
 	msg := models.Message{
-		ID:          len(db.Messages),
+		ID:          models.MessageID(len(db.Messages)),
 		Timestamp:   datetime.Now(),
 		SenderID:    sender,
 		RecipientID: recipient,
 		Content:     content,
 	}
 	db.Messages = append(db.Messages, msg)
-	return &msg, nil
+	return &models.MessageInfo{ID: msg.ID, Timestamp: msg.Timestamp}, nil
 }
 
-func (db *MockDB) GetMessages(ctx context.Context, sender, start, limit int) ([]*models.Message, error) {
+func (db *MockDB) GetMessages(ctx context.Context, sender models.UserID, start, limit int) ([]*models.Message, error) {
 	msgList := make([]*models.Message, 0)
 	for i, msg := range db.Messages {
-		if msg.ID >= start && msg.SenderID == sender && len(msgList) < limit {
+		if int(msg.ID) >= start && msg.SenderID == sender && len(msgList) < limit {
 			msgList = append(msgList, &db.Messages[i])
 		}
 	}

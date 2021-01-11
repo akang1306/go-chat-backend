@@ -7,14 +7,14 @@ import (
 )
 
 type SendMessageRequest struct {
-	Sender    int            `json:"sender"`
-	Recipient int            `json:"recipient"`
+	Sender    UserID         `json:"sender"`
+	Recipient UserID         `json:"recipient"`
 	Content   MessageContent `json:"content"`
 }
 
 type SendMessageRequestJSON struct {
-	Sender    int                    `json:"sender"`
-	Recipient int                    `json:"recipient"`
+	Sender    UserID                 `json:"sender"`
+	Recipient UserID                 `json:"recipient"`
 	Content   map[string]interface{} `json:"content"`
 }
 

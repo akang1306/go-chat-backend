@@ -1,6 +1,6 @@
 package models
 
 type Login struct {
-	UserID int    `json:"id"`
+	UserID UserID `json:"id"`
 	Token  string `json:"token"`
 }

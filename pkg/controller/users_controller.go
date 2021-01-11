@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/challenge/pkg/helpers"
+	"github.com/challenge/pkg/models"
 )
 
 type userRequest struct {
@@ -24,5 +25,11 @@ func (h Handler) CreateUser(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	helpers.RespondJSON(w, id)
+	helpers.RespondJSON(
+		w, struct {
+			ID models.UserID `json:"id"`
+		}{
+			ID: id,
+		},
+	)
 }

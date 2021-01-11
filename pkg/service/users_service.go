@@ -9,13 +9,13 @@ import (
 )
 
 // CreateUser attempts to create user with given username & password and returns user if successful, returns error if not.
-func (h Handler) CreateUser(ctx context.Context, username, password string) (*models.User, error) {
+func (h Handler) CreateUser(ctx context.Context, username, password string) (models.UserID, error) {
 	if username == "" || password == "" {
-		return nil, errors.New("empty username or password")
+		return 0, errors.New("empty username or password")
 	}
 	hash, hashErr := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if hashErr != nil {
-		return nil, hashErr
+		return 0, hashErr
 	}
 	return h.db.AddUser(ctx, username, hash)
 }

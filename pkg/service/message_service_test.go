@@ -16,27 +16,21 @@ func TestCanSendMessage(t *testing.T) {
 	ctx := context.TODO()
 
 	content := models.StringContent{}
-	expectedID := 0
+	expectedID := models.MessageID(0)
 
 	username1 := "user1"
 	username2 := "user2"
 	password := "b"
-	user1, _ := service.CreateUser(ctx, username1, password)
-	user2, _ := service.CreateUser(ctx, username2, password)
+	userID1, _ := service.CreateUser(ctx, username1, password)
+	userID2, _ := service.CreateUser(ctx, username2, password)
 
-	msg, err := service.SendMessage(ctx, user1.ID, user2.ID, content)
+	msgInfo, err := service.SendMessage(ctx, userID1, userID2, content)
 
 	if err != nil {
 		t.Errorf("Error: %s", err)
 	} else {
-		if msg.ID != expectedID {
-			t.Errorf("Error: got id %d but expected %d", msg.ID, expectedID)
-		}
-		if msg.SenderID != user1.ID {
-			t.Errorf("Error: got sender %d but expected %d", msg.SenderID, user1.ID)
-		}
-		if msg.RecipientID != user2.ID {
-			t.Errorf("Error: got recipient %d but expected %d", msg.RecipientID, user2.ID)
+		if msgInfo.ID != expectedID {
+			t.Errorf("Error: got id %d but expected %d", msgInfo.ID, expectedID)
 		}
 	}
 }
@@ -48,10 +42,10 @@ func TestCanNotSendMessageToUnexistingRecipient(t *testing.T) {
 
 	username1 := "user1"
 	password := "a"
-	user1, _ := service.CreateUser(ctx, username1, password)
+	userID1, _ := service.CreateUser(ctx, username1, password)
 	content := models.StringContent{}
 
-	_, err := service.SendMessage(ctx, user1.ID, user1.ID+1, content)
+	_, err := service.SendMessage(ctx, userID1, userID1+1, content)
 
 	if err == nil {
 		t.Errorf("Error: expected err but got nil")
@@ -65,10 +59,10 @@ func TestCanNotSendMessageFromUnexistingSender(t *testing.T) {
 
 	username1 := "user1"
 	password := "a"
-	user1, _ := service.CreateUser(ctx, username1, password)
+	userID1, _ := service.CreateUser(ctx, username1, password)
 	content := models.StringContent{}
 
-	_, err := service.SendMessage(ctx, user1.ID+1, user1.ID, content)
+	_, err := service.SendMessage(ctx, userID1+1, userID1, content)
 
 	if err == nil {
 		t.Errorf("Error: expected err but got nil")
@@ -84,17 +78,17 @@ func TestGetMessages(t *testing.T) {
 	username1 := "user1"
 	username2 := "user2"
 	password := "a"
-	user1, _ := service.CreateUser(ctx, username1, password)
-	user2, _ := service.CreateUser(ctx, username2, password)
+	userID1, _ := service.CreateUser(ctx, username1, password)
+	userID2, _ := service.CreateUser(ctx, username2, password)
 	content := models.StringContent{}
 
-	service.SendMessage(ctx, user1.ID, user2.ID, content)
-	service.SendMessage(ctx, user1.ID, user2.ID, content)
-	service.SendMessage(ctx, user1.ID, user2.ID, content)
+	service.SendMessage(ctx, userID1, userID2, content)
+	service.SendMessage(ctx, userID1, userID2, content)
+	service.SendMessage(ctx, userID1, userID2, content)
 
 	// limit works as expected
 	limit := 2
-	messages, err := service.GetMessages(ctx, user1.ID, 0, limit)
+	messages, err := service.GetMessages(ctx, userID1, 0, limit)
 	if err != nil {
 		t.Errorf("Error: %s", err)
 	}

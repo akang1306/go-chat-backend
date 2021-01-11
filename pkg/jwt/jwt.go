@@ -33,7 +33,7 @@ func (Manager) TokenForUser(user *models.User) string {
 }
 
 // VerifyToken checks the tokenString and returns userID if valid, error if not.
-func (Manager) VerifyToken(tokenString string) (int, error) {
+func (Manager) VerifyToken(tokenString string) (models.UserID, error) {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		return []byte(secretKey), nil
 	})
@@ -48,7 +48,7 @@ func (Manager) VerifyToken(tokenString string) (int, error) {
 	if err != nil {
 		return 0, err
 	}
-	return int(userID), nil
+	return userID, nil
 }
 
 func New() Manager {

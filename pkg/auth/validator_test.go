@@ -7,13 +7,14 @@ import (
 	"testing"
 
 	"github.com/challenge/pkg/auth"
+	"github.com/challenge/pkg/models"
 )
 
 type mockValidator struct {
 	IsValid bool
 }
 
-func (v mockValidator) VerifyToken(tokenString string) (int, error) {
+func (v mockValidator) VerifyToken(tokenString string) (models.UserID, error) {
 	if !v.IsValid {
 		return 0, errors.New("error")
 	}

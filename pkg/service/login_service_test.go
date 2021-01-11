@@ -6,6 +6,7 @@ import (
 
 	"github.com/challenge/pkg/database"
 	"github.com/challenge/pkg/jwt"
+	"github.com/challenge/pkg/models"
 	"github.com/challenge/pkg/service"
 )
 
@@ -14,7 +15,7 @@ func TestLoginWorksAsExpected(t *testing.T) {
 	service := service.NewService(db, jwt.New())
 	ctx := context.TODO()
 
-	expectedID := 0
+	expectedID := models.UserID(0)
 	username := "user1"
 	password := "generic_password"
 

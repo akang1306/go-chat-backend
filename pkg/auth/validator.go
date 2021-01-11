@@ -4,10 +4,12 @@ import (
 	"context"
 	"net/http"
 	"strings"
+
+	"github.com/challenge/pkg/models"
 )
 
 type tokenValidator interface {
-	VerifyToken(tokenString string) (int, error)
+	VerifyToken(tokenString string) (models.UserID, error)
 }
 
 const authorizationHeader string = "Authorization"

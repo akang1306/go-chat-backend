@@ -6,6 +6,7 @@ import (
 
 	"github.com/challenge/pkg/database"
 	"github.com/challenge/pkg/jwt"
+	"github.com/challenge/pkg/models"
 	"github.com/challenge/pkg/service"
 )
 
@@ -14,20 +15,17 @@ func TestCanCreateUser(t *testing.T) {
 	service := service.NewService(db, jwt.New())
 	ctx := context.TODO()
 
-	expectedID := 0
+	expectedID := models.UserID(0)
 	username := "user1"
 	password := "generic_password"
 
-	user, err := service.CreateUser(ctx, username, password)
+	id, err := service.CreateUser(ctx, username, password)
 
 	if err != nil {
 		t.Errorf("Error: %s", err)
 	}
-	if user.ID != expectedID {
-		t.Errorf("Error: got id %d but expected %d", user.ID, expectedID)
-	}
-	if user.Username != username {
-		t.Errorf("Error: got username %s but expected %s", user.Username, username)
+	if id != expectedID {
+		t.Errorf("Error: got id %d but expected %d", id, expectedID)
 	}
 }
 
