@@ -3,6 +3,7 @@ package database
 import (
 	"context"
 	"errors"
+	"fmt"
 	"sync"
 
 	"github.com/challenge/pkg/models"
@@ -39,15 +40,38 @@ func (db *MockDB) GetUserByUsername(ctx context.Context, username string) (*mode
 			return &user, nil
 		}
 	}
-	return nil, errors.New("user id not present")
+	return nil, errors.New(fmt.Sprintf("user: %s not present", username))
 }
 
-func (db *MockDB) AddMessage(ctx context.Context, msg models.Message) error {
+func (db *MockDB) GetUserByID(ctx context.Context, id int) (*models.User, error) {
+	for _, user := range db.Users {
+		if user.ID == id {
+			return &user, nil
+		}
+	}
+	return nil, errors.New(fmt.Sprintf("user id: %d not present", id))
+}
+
+func (db *MockDB) AddMessage(ctx context.Context, sender, recipient int, content models.MessageContent) (*models.Message, error) {
 	db.m.Lock()
 	defer db.m.Unlock()
-	msg.ID = len(db.Messages)
+
+	// Check that sender & recipient both exist
+	if _, err := db.GetUserByID(ctx, sender); err != nil {
+		return nil, err
+	}
+	if _, err := db.GetUserByID(ctx, recipient); err != nil {
+		return nil, err
+	}
+
+	msg := models.Message{
+		ID:          len(db.Messages),
+		SenderID:    sender,
+		RecipientID: recipient,
+		Content:     content,
+	}
 	db.Messages = append(db.Messages, msg)
-	return nil
+	return &msg, nil
 }
 
 func (db *MockDB) GetMessages(ctx context.Context, sender, start, limit int) error {
