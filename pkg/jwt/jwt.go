@@ -16,11 +16,6 @@ var secretKey string = "secret"
 type Manager struct {
 }
 
-type Token struct {
-	UserID int
-	*jwt.StandardClaims
-}
-
 // TokenForUser returns a token valid for the given user with default expiration.
 func (Manager) TokenForUser(user *models.User) string {
 	expiresAt := time.Now().Add(defaultExpiration).Unix()
