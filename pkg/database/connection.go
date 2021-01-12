@@ -11,6 +11,7 @@ var once sync.Once
 // Commands for initial database creation.
 const (
 	UsersInitCmd = `CREATE TABLE IF NOT EXISTS users (
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		username TEXT UNIQUE NOT NULL,
 		password TEXT NOT NULL)`
 	MessagesInitCmd = `CREATE TABLE IF NOT EXISTS messages (
@@ -24,6 +25,7 @@ const (
 )
 
 func InitChatDatabase() {
+	db.Exec(`PRAGMA foreign_keys = ON`)
 	db.Exec(UsersInitCmd)
 	db.Exec(MessagesInitCmd)
 }
