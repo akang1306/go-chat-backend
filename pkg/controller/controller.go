@@ -6,6 +6,7 @@ import (
 	"github.com/challenge/pkg/models"
 )
 
+// serviceHandler provides an interface that handles all logic for the requests.
 type serviceHandler interface {
 	CreateUser(ctx context.Context, username, password string) (models.UserID, error)
 	Login(ctx context.Context, username, password string) (*models.Login, error)

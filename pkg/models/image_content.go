@@ -34,7 +34,7 @@ func (content ImageContent) MarshalJSON() ([]byte, error) {
 			Type string `json:"type"`
 			URL  string `json:"url"`
 		}{
-			Type: ImageType,
+			Type: content.Type(),
 			URL:  content.URL,
 		},
 	)

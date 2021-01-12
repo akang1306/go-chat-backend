@@ -6,19 +6,21 @@ import (
 	"fmt"
 )
 
+// Provides the request structure for the SendMessage endpoint.
 type SendMessageRequest struct {
 	Sender    UserID         `json:"sender"`
 	Recipient UserID         `json:"recipient"`
 	Content   MessageContent `json:"content"`
 }
 
+// Used by UnmarshalJSON & test purposes.
 type SendMessageRequestJSON struct {
 	Sender    UserID                 `json:"sender"`
 	Recipient UserID                 `json:"recipient"`
 	Content   map[string]interface{} `json:"content"`
 }
 
-// UnmarshalJSON lets the message request dinamically parse the content data given the content type.
+// UnmarshalJSON lets the message request dinamically parse the content data.
 func (request *SendMessageRequest) UnmarshalJSON(b []byte) error {
 	var requestJSON SendMessageRequestJSON
 	if err := json.Unmarshal(b, &requestJSON); err != nil {

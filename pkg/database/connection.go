@@ -8,6 +8,7 @@ import (
 var db *sql.DB
 var once sync.Once
 
+// Commands for initial database creation.
 const (
 	UsersInitCmd = `CREATE TABLE IF NOT EXISTS users (
 		username TEXT UNIQUE NOT NULL,

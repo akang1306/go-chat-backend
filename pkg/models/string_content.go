@@ -27,7 +27,7 @@ func (content StringContent) MarshalJSON() ([]byte, error) {
 			Type string `json:"type"`
 			Text string `json:"text"`
 		}{
-			Type: StringType,
+			Type: content.Type(),
 			Text: content.Value,
 		},
 	)

@@ -17,6 +17,10 @@ type Message struct {
 	Content     MessageContent
 }
 
+// GetMessageContent parses the data with the matching content type struct.
+// The format of the data is given by MessageContent.Data() and its parsing
+// is given by MessageContent.FromData().
+// This is used mainly to store and load the content dinamically from the database.
 func GetMessageContent(contentType string, data string) MessageContent {
 	switch contentType {
 	case ImageType:

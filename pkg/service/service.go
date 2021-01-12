@@ -6,6 +6,7 @@ import (
 	"github.com/challenge/pkg/models"
 )
 
+// database provides an interface that allows an abstraction from the storage layer.
 type database interface {
 	AddUser(ctx context.Context, username string, password []byte) (models.UserID, error)
 	GetUserByUsername(ctx context.Context, username string) (*models.User, error)
