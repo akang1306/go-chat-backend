@@ -1,4 +1,4 @@
-# Simple Chat Backend in Go
+# Simple Chat Backend
 
 ### Instructions
 
@@ -31,4 +31,3 @@ To name a few:
 1. Add tests for the jwt module.
 1. Provide an abstraction from the hash function used for passwords for easier testing and modifications.
 1. Add Dockerfile and k8s for deployment.
-
