@@ -69,6 +69,23 @@ func TestCanNotSendMessageFromUnexistingSender(t *testing.T) {
 	}
 }
 
+func TestCanNotSendMessageToTheSameUser(t *testing.T) {
+	db := database.NewMockDB()
+	service := service.NewService(db, jwt.New())
+	ctx := context.TODO()
+
+	username1 := "user1"
+	password := "a"
+	userID1, _ := service.CreateUser(ctx, username1, password)
+	content := models.StringContent{}
+
+	_, err := service.SendMessage(ctx, userID1, userID1, content)
+
+	if err == nil {
+		t.Errorf("Error: expected err but got nil")
+	}
+}
+
 // TODO: Test all variations
 func TestGetMessages(t *testing.T) {
 	db := database.NewMockDB()

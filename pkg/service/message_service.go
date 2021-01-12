@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"errors"
 
 	"github.com/challenge/pkg/models"
 )
@@ -10,6 +11,9 @@ var defaultLimit int = 100
 
 // SendMessage attempts to store msg to db and returns created message model, else returns error.
 func (h Handler) SendMessage(ctx context.Context, sender, recipient models.UserID, messageContent models.MessageContent) (*models.MessageInfo, error) {
+	if sender == recipient {
+		return nil, errors.New("sender and recipient can not be equal")
+	}
 	return h.db.AddMessage(ctx, sender, recipient, messageContent)
 }
 
