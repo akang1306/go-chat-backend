@@ -88,7 +88,7 @@ func TestGetMessages(t *testing.T) {
 
 	// limit works as expected
 	limit := 2
-	messages, err := service.GetMessages(ctx, userID1, 0, limit)
+	messages, err := service.GetMessages(ctx, userID2, 0, limit)
 	if err != nil {
 		t.Errorf("Error: %s", err)
 	}

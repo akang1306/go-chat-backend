@@ -76,10 +76,10 @@ func (db *MockDB) AddMessage(ctx context.Context, sender, recipient models.UserI
 	return &models.MessageInfo{ID: msg.ID, Timestamp: msg.Timestamp}, nil
 }
 
-func (db *MockDB) GetMessages(ctx context.Context, sender models.UserID, start, limit int) ([]*models.Message, error) {
+func (db *MockDB) GetMessages(ctx context.Context, recipient models.UserID, start, limit int) ([]*models.Message, error) {
 	msgList := make([]*models.Message, 0)
 	for i, msg := range db.Messages {
-		if int(msg.ID) >= start && msg.SenderID == sender && len(msgList) < limit {
+		if int(msg.ID) >= start && msg.RecipientID == recipient && len(msgList) < limit {
 			msgList = append(msgList, &db.Messages[i])
 		}
 	}

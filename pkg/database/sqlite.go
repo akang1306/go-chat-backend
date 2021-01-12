@@ -22,7 +22,7 @@ func (db *SQLiteDB) AddUser(ctx context.Context, username string, password []byt
 
 func (db *SQLiteDB) GetUserByUsername(ctx context.Context, username string) (*models.User, error) {
 	rows, err := db.conn.Query(
-		`SELECT rowid, username, password FROM users
+		`SELECT id, username, password FROM users
 			WHERE username = ?`, username)
 	if err != nil {
 		return nil, err
@@ -53,11 +53,11 @@ func (db *SQLiteDB) AddMessage(ctx context.Context, sender, recipient models.Use
 	}, nil
 }
 
-func (db *SQLiteDB) GetMessages(ctx context.Context, sender models.UserID, start, limit int) ([]*models.Message, error) {
+func (db *SQLiteDB) GetMessages(ctx context.Context, recipient models.UserID, start, limit int) ([]*models.Message, error) {
 	rows, err := db.conn.Query(
 		`SELECT rowid, timestamp, type, content, recipient, sender FROM messages
-			WHERE rowid >= ? AND sender = ? ORDER BY rowid ASC LIMIT ?`,
-		start, sender, limit)
+			WHERE rowid >= ? AND recipient = ? ORDER BY rowid ASC LIMIT ?`,
+		start, recipient, limit)
 	if err != nil {
 		return nil, err
 	}
