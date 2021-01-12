@@ -6,6 +6,11 @@ import (
 
 	"github.com/challenge/pkg/auth"
 	"github.com/challenge/pkg/controller"
+	"github.com/challenge/pkg/database"
+	"github.com/challenge/pkg/jwt"
+	"github.com/challenge/pkg/service"
+
+	_ "github.com/mattn/go-sqlite3"
 )
 
 const (
@@ -16,10 +21,29 @@ const (
 	MessagesEndpoint = "/messages"
 )
 
-func main() {
-	h := controller.NewController()
+var (
+	handler      controller.Handler
+	validateUser func(http.HandlerFunc) http.HandlerFunc
+)
 
-	// Configure endpoints
+func main() {
+	conn := database.NewConnection("chat.sqlite")
+	defer conn.Close()
+	database.InitChatDatabase()
+
+	handler = controller.Handler{
+		Service: service.NewService(database.NewSQLiteDB(conn), jwt.New()),
+	}
+	validateUser = auth.NewValidateUserHandler(jwt.New())
+
+	configureEndpoints()
+
+	// Start server
+	log.Println("Server started at port " + ServerPort)
+	log.Fatal(http.ListenAndServe(":"+ServerPort, nil))
+}
+
+func configureEndpoints() {
 	// Health
 	http.HandleFunc(CheckEndpoint, func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodPost {
@@ -27,7 +51,7 @@ func main() {
 			return
 		}
 
-		h.Check(w, r)
+		handler.Check(w, r)
 	})
 
 	// Users
@@ -37,7 +61,7 @@ func main() {
 			return
 		}
 
-		h.CreateUser(w, r)
+		handler.CreateUser(w, r)
 	})
 
 	// Auth
@@ -47,23 +71,20 @@ func main() {
 			return
 		}
 
-		h.Login(w, r)
+		handler.Login(w, r)
 	})
 
 	// Messages
-	http.HandleFunc(MessagesEndpoint, auth.ValidateUser(func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc(MessagesEndpoint, validateUser(func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
 		case http.MethodGet:
-			h.GetMessages(w, r)
+			handler.GetMessages(w, r)
 		case http.MethodPost:
-			h.SendMessage(w, r)
+			handler.SendMessage(w, r)
 		default:
 			http.Error(w, http.StatusText(405), http.StatusMethodNotAllowed)
 			return
 		}
 	}))
 
-	// Start server
-	log.Println("Server started at port " + ServerPort)
-	log.Fatal(http.ListenAndServe(":"+ServerPort, nil))
 }
